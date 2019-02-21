@@ -37,12 +37,12 @@
 .operators {
     display: grid;
     grid-gap: 4px;
-    border-left: 1px solid  #FBE8A6;
-    grid-template: 1fr 1fr 1fr 1fr 1fr / 1fr;
+    border-left: 2px solid  #FBE8A6;
+    grid-template: repeat(1fr, 4) / 1fr;
 }
 
 .clear_button {
-    border-top: 1px solid #FBE8A6;
+    border-top: 2px solid #FBE8A6;
     height: 50px;
     display: flex;
     justify-content: center;
