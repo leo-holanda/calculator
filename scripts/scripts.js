@@ -65,12 +65,28 @@ function concludeOperation() {
         }
     }
 
-    console.log(operatorStack)
     while(operatorStack.length > 0) {
         finalStack.push(operatorStack.pop())
     }
+    evaluatePostfix(finalStack);
+}
 
-    console.log(finalStack);
+function evaluatePostfix(postfixStack) {
+
+    while(postfixStack.length > 1){
+        console.log(postfixStack);
+        selected = postfixStack.shift();
+        if(operators.includes(selected)) {
+            firstOperand = postfixStack.pop();
+            secondOperand = postfixStack.pop();
+            postfixStack.push(calculateOperation(firstOperand,selected,secondOperand));       
+        }
+        else if(!(isNaN(selected))) {
+            postfixStack.push(selected);
+        }
+    }
+    displayValue.textContent = postfixStack;
+    console.log(postfixStack)
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -93,12 +109,9 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 		
 		case 'x':
 		result = firstOperand * secondOperand;
-		break;
-	}
-
-	console.log(result);
-	displayValue.textContent = result;
-
+        break;
+    }
+    return result;
 }
 
 document.querySelector('#clear_button').addEventListener('click', function(event) {
