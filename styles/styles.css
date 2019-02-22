@@ -6,6 +6,7 @@
     height: 100vh;
     font-family: 'Oswald', sans-serif;
     color: #FBE8A6;
+    pointer-events: none;
 }
 
 .calculator {
@@ -49,6 +50,16 @@
     align-items: center;
 }
 
+.clear_button button {
+    height: 100%;
+    width: 100%;
+}
+
+.clear_button button:active {
+    background-color:#F77F00;
+    color: white;
+}
+
 button {
     font-size: 20px;
     color: #FBE8A6;
@@ -56,4 +67,18 @@ button {
     border: 0;
     background-color: transparent;
     outline: 0;
+    box-sizing: border-box;
+    pointer-events: auto;
+    transition-duration: 0.5s;
+}
+
+button:hover {
+    transition-duration: 0.5s;
+    background-color: #FBE8A6;
+    color: #011627;
+}
+
+button:active {
+    transition: none;
+    background-color: #182B3A;
 }
