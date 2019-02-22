@@ -28,12 +28,49 @@ function appendOperator(inputOperator) {
 	operand = '';
 }
 
+
+function hasHigherPrecende(firstOperator, secondOperator) {
+    if(firstOperator == 'x' || firstOperator == '/') {
+        if(secondOperator == '+' || secondOperator == '-') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function concludeOperation() {
-	operationArray.push(operand);
-	console.log(operationArray)
-	for(let i = 1; i < operationArray.length; i = i + 2) {
-		calculateOperation(operationArray[i-1],operationArray[i],operationArray[i+1]);
-	}
+    operationArray.push(operand);
+    
+    let finalStack = [];
+    let operatorStack = [];
+
+    for(let i = 0; i < operationArray.length; i++) {
+        if(!isNaN(operationArray[i])) {
+            finalStack.push(operationArray[i]);
+        }
+        else if(operators.includes(operationArray[i])) {
+            if(operatorStack.length == 0) {
+                operatorStack.push(operationArray[i]);
+            }
+            else {
+                if(hasHigherPrecende(operationArray[i], operatorStack[operatorStack.length - 1])) {
+                    operatorStack.push(operationArray[i]);
+                }
+                else {
+                    finalStack.push(operatorStack.pop());
+                    operatorStack.push(operationArray[i]);    
+                }     
+            }
+        }
+    }
+
+    console.log(operatorStack)
+    while(operatorStack.length > 0) {
+        finalStack.push(operatorStack.pop())
+    }
+
+    console.log(finalStack);
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -43,8 +80,8 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 	let result = '';
 	switch(operator) {
 		case '+':
-		result = firstOperand + secondOperand;
-		break;
+        result = firstOperand + secondOperand;
+        break;
 		
 		case '-':
 		result = firstOperand - secondOperand;
