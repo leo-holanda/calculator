@@ -5,6 +5,7 @@ const displayValue = document.querySelector('#displayValue')
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
 
+	displayValue.textContent += inputCharacter;
 	if((!isNaN(inputCharacter))) {
 		appendOperand(inputCharacter);
     }
@@ -39,24 +40,32 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 	firstOperand = Number(firstOperand);
 	secondOperand = Number(secondOperand);
 
+	let result = '';
 	switch(operator) {
 		case '+':
-		console.log(firstOperand + secondOperand);
+		result = firstOperand + secondOperand;
 		break;
 		
 		case '-':
-		console.log(firstOperand - secondOperand);
+		result = firstOperand - secondOperand;
 		break;
 
 		case '/':
-		console.log(firstOperand / secondOperand);
+		result = firstOperand / secondOperand;
 		break;
 		
 		case 'x':
-		console.log(firstOperand * secondOperand);
+		result = firstOperand * secondOperand;
 		break;
 	}
 
-	console.log()
+	console.log(result);
+	displayValue.textContent = result;
 
 }
+
+document.querySelector('#clear_button').addEventListener('click', function(event) {
+	operand = '';
+	operationArray = [];
+	displayValue.textContent = '';
+})
