@@ -22,6 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    word-spacing: 5px;
 }
 
 .keyboard {
@@ -39,7 +40,7 @@
     display: grid;
     grid-gap: 4px;
     border-left: 2px solid  #FBE8A6;
-    grid-template: repeat(1fr, 4) / 1fr;
+    grid-template: repeat(1fr, 5) / 1fr;
 }
 
 .clear_button {

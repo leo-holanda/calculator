@@ -1,42 +1,44 @@
-const operators = ['+','-','x','/'];
+function isOperator(inputCharacter) {
+    const operators = ['+','-','x','/'];
+    return operators.includes(inputCharacter);
+}
+
+function isNumber(inputCharacter) {
+    return ((!(isNaN(inputCharacter)) && isFinite(inputCharacter)));
+}
+
 let operationArray = [];
 
 const displayValue = document.querySelector('#displayValue')
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
 
-	displayValue.textContent += inputCharacter;
-	if((!isNaN(inputCharacter))) {
-		appendOperand(inputCharacter);
+	if(isNumber(inputCharacter)) {
+        appendOperand(inputCharacter);
+        updateDisplay(inputCharacter, true);
+	}
+	else if(isOperator(inputCharacter)) {
+        appendOperator(inputCharacter);
+        updateDisplay(inputCharacter, false);
     }
-	else if(operators.includes(inputCharacter)) {
-		appendOperator(inputCharacter);
-	}	
 	else if(inputCharacter == '=') {	
 		concludeOperation();
 	}
 });
 
+function updateDisplay(inputCharacter, selector) {
+    displayValue.textContent += selector ? inputCharacter : ' ' + inputCharacter + ' ';
+}
+
 let operand = '';
 function appendOperand(inputDigit) {
-	operand += inputDigit;
+    operand += inputDigit;
 }
 
 function appendOperator(inputOperator) {
-	operationArray.push(operand);
+    operationArray.push(operand);
 	operationArray.push(inputOperator);
 	operand = '';
-}
-
-
-function hasHigherPrecende(firstOperator, secondOperator) {
-    if(firstOperator == 'x' || firstOperator == '/') {
-        if(secondOperator == '+' || secondOperator == '-') {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 function concludeOperation() {
@@ -49,7 +51,7 @@ function concludeOperation() {
         if(!isNaN(operationArray[i])) {
             finalStack.push(operationArray[i]);
         }
-        else if(operators.includes(operationArray[i])) {
+        else if(isOperator(operationArray[i])) {
             if(operatorStack.length == 0) {
                 operatorStack.push(operationArray[i]);
             }
@@ -71,14 +73,24 @@ function concludeOperation() {
     evaluatePostfix(finalStack);
 }
 
+function hasHigherPrecende(firstOperator, secondOperator) {
+    if(firstOperator == 'x' || firstOperator == '/') {
+        if(secondOperator == '+' || secondOperator == '-') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function evaluatePostfix(postfixStack) {
 
     while(postfixStack.length > 1){
         console.log(postfixStack);
         selected = postfixStack.shift();
-        if(operators.includes(selected)) {
-            firstOperand = postfixStack.pop();
+        if(isOperator(selected)) {
             secondOperand = postfixStack.pop();
+            firstOperand = postfixStack.pop();
             postfixStack.push(calculateOperation(firstOperand,selected,secondOperand));       
         }
         else if(!(isNaN(selected))) {
@@ -115,7 +127,7 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 }
 
 document.querySelector('#clear_button').addEventListener('click', function(event) {
-	operand = '';
+    operand = '';
 	operationArray = [];
 	displayValue.textContent = '';
 })
