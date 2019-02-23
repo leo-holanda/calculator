@@ -7,21 +7,21 @@ function isNumber(inputCharacter) {
     return ((!(isNaN(inputCharacter)) && isFinite(inputCharacter)));
 }
 
-let operationArray = [];
+let initialExpression = [];
 
 const displayValue = document.querySelector('#displayValue')
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
 
-	if(isNumber(inputCharacter)) {
+	if (isNumber(inputCharacter)) {
         appendOperand(inputCharacter);
         updateDisplay(inputCharacter, true);
 	}
-	else if(isOperator(inputCharacter)) {
+	else if (isOperator(inputCharacter)) {
         appendOperator(inputCharacter);
         updateDisplay(inputCharacter, false);
     }
-	else if(inputCharacter == '=') {	
+	else if (inputCharacter == '=') {	
 		concludeOperation();
 	}
 });
@@ -36,46 +36,47 @@ function appendOperand(inputDigit) {
 }
 
 function appendOperator(inputOperator) {
-    operationArray.push(operand);
-	operationArray.push(inputOperator);
+    initialExpression.push(operand);
+	initialExpression.push(inputOperator);
 	operand = '';
 }
 
 function concludeOperation() {
-    operationArray.push(operand);
+    initialExpression.push(operand);
     
-    let finalStack = [];
+    let postfixStack = [];
     let operatorStack = [];
 
-    for(let i = 0; i < operationArray.length; i++) {
-        if(!isNaN(operationArray[i])) {
-            finalStack.push(operationArray[i]);
+    for(let i = 0; i < initialExpression.length; i++) {
+        if (isNumber(initialExpression[i])) {
+            postfixStack.push(initialExpression[i]);
         }
-        else if(isOperator(operationArray[i])) {
-            if(operatorStack.length == 0) {
-                operatorStack.push(operationArray[i]);
+        else if (isOperator(initialExpression[i])) {
+            if (operatorStack.length == 0) {
+                operatorStack.push(initialExpression[i]);
             }
             else {
-                if(hasHigherPrecende(operationArray[i], operatorStack[operatorStack.length - 1])) {
-                    operatorStack.push(operationArray[i]);
+                if (hasHigherPrecende(initialExpression[i], operatorStack[operatorStack.length - 1])) {
+                    operatorStack.push(initialExpression[i]);
                 }
                 else {
-                    finalStack.push(operatorStack.pop());
-                    operatorStack.push(operationArray[i]);    
+                    postfixStack.push(operatorStack.pop());
+                    operatorStack.push(initialExpression[i]);    
                 }     
             }
         }
     }
 
     while(operatorStack.length > 0) {
-        finalStack.push(operatorStack.pop())
+        postfixStack.push(operatorStack.pop())
     }
-    evaluatePostfix(finalStack);
+
+    evaluatePostfix(postfixStack);
 }
 
 function hasHigherPrecende(firstOperator, secondOperator) {
-    if(firstOperator == 'x' || firstOperator == '/') {
-        if(secondOperator == '+' || secondOperator == '-') {
+    if (firstOperator == 'x' || firstOperator == '/') {
+        if (secondOperator == '+' || secondOperator == '-') {
             return true;
         }
     }
@@ -83,22 +84,22 @@ function hasHigherPrecende(firstOperator, secondOperator) {
     return false;
 }
 
-function evaluatePostfix(postfixStack) {
-
-    while(postfixStack.length > 1){
-        console.log(postfixStack);
-        selected = postfixStack.shift();
-        if(isOperator(selected)) {
-            secondOperand = postfixStack.pop();
-            firstOperand = postfixStack.pop();
-            postfixStack.push(calculateOperation(firstOperand,selected,secondOperand));       
+function evaluatePostfix(outputStack) {
+    while(outputStack.length > 1){
+        console.log(outputStack);
+        pickedCharacter = outputStack.shift();
+        if (isOperator(pickedCharacter)) {
+            secondOperand = outputStack.pop();
+            firstOperand = outputStack.pop();
+            outputStack.push(calculateOperation(firstOperand,pickedCharacter,secondOperand));       
         }
-        else if(!(isNaN(selected))) {
-            postfixStack.push(selected);
+        else if (isNumber(pickedCharacter)) {
+            outputStack.push(pickedCharacter);
         }
     }
-    displayValue.textContent = postfixStack;
-    console.log(postfixStack)
+    
+    displayValue.textContent = outputStack;
+    console.log(outputStack)
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -113,7 +114,7 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 		
 		case '-':
 		result = firstOperand - secondOperand;
-		break;
+	    	break;
 
 		case '/':
 		result = firstOperand / secondOperand;
@@ -123,11 +124,12 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 		result = firstOperand * secondOperand;
         break;
     }
+    
     return result;
 }
 
 document.querySelector('#clear_button').addEventListener('click', function(event) {
     operand = '';
-	operationArray = [];
+	initialExpression = [];
 	displayValue.textContent = '';
 })
