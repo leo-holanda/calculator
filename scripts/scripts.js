@@ -4,7 +4,7 @@ function isOperator(inputCharacter) {
 }
 
 function isNumber(inputCharacter) {
-    return ((!(isNaN(inputCharacter)) && isFinite(inputCharacter)));
+    return (((!(isNaN(inputCharacter)) && isFinite(inputCharacter))) || inputCharacter == '.');
 }
 
 let initialExpression = [];
@@ -21,8 +21,10 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         appendOperator(inputCharacter);
         updateDisplay(inputCharacter, false);
     }
-	else if (inputCharacter == '=') {	
-		concludeOperation();
+	else if (inputCharacter == '=') {    
+        initialExpression.push(operand);
+        operand = '';	
+        concludeOperation();
 	}
 });
 
@@ -36,14 +38,14 @@ function appendOperand(inputDigit) {
 }
 
 function appendOperator(inputOperator) {
-    initialExpression.push(operand);
-	initialExpression.push(inputOperator);
+    if (operand.length > 0) {
+        initialExpression.push(operand);
+    }
+    initialExpression.push(inputOperator);
 	operand = '';
 }
 
 function concludeOperation() {
-    initialExpression.push(operand);
-    
     let postfixStack = [];
     let operatorStack = [];
 
@@ -86,7 +88,6 @@ function hasHigherPrecende(firstOperator, secondOperator) {
 
 function evaluatePostfix(outputStack) {
     while(outputStack.length > 1){
-        console.log(outputStack);
         pickedCharacter = outputStack.shift();
         if (isOperator(pickedCharacter)) {
             secondOperand = outputStack.pop();
@@ -99,7 +100,7 @@ function evaluatePostfix(outputStack) {
     }
     
     displayValue.textContent = outputStack;
-    console.log(outputStack)
+    initialExpression = outputStack;
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -116,8 +117,14 @@ function calculateOperation(firstOperand, operator, secondOperand) {
 		result = firstOperand - secondOperand;
 	    	break;
 
-		case '/':
-		result = firstOperand / secondOperand;
+        case '/':
+        if (secondOperand == 0) {
+            alert('you can\'t divide by zero')
+            clearDisplay();
+        }
+        else {
+            result = firstOperand / secondOperand;
+        }
 		break;
 		
 		case 'x':
@@ -128,8 +135,9 @@ function calculateOperation(firstOperand, operator, secondOperand) {
     return result;
 }
 
-document.querySelector('#clear_button').addEventListener('click', function(event) {
+function clearDisplay() {
     operand = '';
 	initialExpression = [];
 	displayValue.textContent = '';
-})
+}
+document.querySelector('#clear_button').addEventListener('click', clearDisplay);
