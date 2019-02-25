@@ -7,42 +7,34 @@ function isNumber(inputCharacter) {
     return (((!(isNaN(inputCharacter)) && isFinite(inputCharacter))) || inputCharacter == '.');
 }
 
-let initialExpression = [];
-
 const displayValue = document.querySelector('#displayValue')
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
 
 	if (isNumber(inputCharacter)) {
-        appendOperand(inputCharacter);
-        updateDisplay(inputCharacter, true);
+        updateDisplay(inputCharacter);
 	}
 	else if (isOperator(inputCharacter)) {
-        appendOperator(inputCharacter);
-        updateDisplay(inputCharacter, false);
+        updateDisplay(' ' + inputCharacter + ' ');
     }
 	else if (inputCharacter == '=') {    
-        initialExpression.push(operand);
-        operand = '';	
-        concludeOperation();
-	}
+        getExpression();
+    }
 });
 
-function updateDisplay(inputCharacter, selector) {
-    displayValue.textContent += selector ? inputCharacter : ' ' + inputCharacter + ' ';
+function getExpression() {
+    let initialExpression = displayValue.textContent;
+    initialExpression = initialExpression.replace(/\s/g, '');
+    initialExpression = initialExpression.replace(/\+/g, ',+,');
+    initialExpression = initialExpression.replace(/\-/g, ',-,');
+    initialExpression = initialExpression.replace(/\x/g, ',x,');
+    initialExpression = initialExpression.replace(/\//g, ',/,');
+    initialExpression = initialExpression.split(',');
+    console.log(initialExpression)
 }
 
-let operand = '';
-function appendOperand(inputDigit) {
-    operand += inputDigit;
-}
-
-function appendOperator(inputOperator) {
-    if (operand.length > 0) {
-        initialExpression.push(operand);
-    }
-    initialExpression.push(inputOperator);
-	operand = '';
+function updateDisplay(inputCharacter) {
+    displayValue.textContent += inputCharacter;
 }
 
 function concludeOperation() {
