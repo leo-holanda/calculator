@@ -18,44 +18,55 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         updateDisplay(' ' + inputCharacter + ' ');
     }
 	else if (inputCharacter == '=') {    
-        getExpression();
+        concludeOperation();
     }
 });
 
-function getExpression() {
-    let initialExpression = displayValue.textContent;
+function updateDisplay(displayText) {
+    displayValue.textContent += displayText;
+}
+
+function concludeOperation() {
+    let expression = getExpression();
+    expression = prepareExpression(expression);
+    expression = convertToPostfix(expression);
+    evaluatePostfix(expression);
+}
+
+function getExpression() { 
+   return displayValue.textContent;
+}
+
+function prepareExpression(initialExpression) {
     initialExpression = initialExpression.replace(/\s/g, '');
     initialExpression = initialExpression.replace(/\+/g, ',+,');
     initialExpression = initialExpression.replace(/\-/g, ',-,');
     initialExpression = initialExpression.replace(/\x/g, ',x,');
     initialExpression = initialExpression.replace(/\//g, ',/,');
     initialExpression = initialExpression.split(',');
-    console.log(initialExpression)
+    
+    return initialExpression;
 }
 
-function updateDisplay(inputCharacter) {
-    displayValue.textContent += inputCharacter;
-}
-
-function concludeOperation() {
+function convertToPostfix(processedExpression) {
     let postfixStack = [];
     let operatorStack = [];
 
-    for(let i = 0; i < initialExpression.length; i++) {
-        if (isNumber(initialExpression[i])) {
-            postfixStack.push(initialExpression[i]);
+    for(let i = 0; i < processedExpression.length; i++) {
+        if (isNumber(processedExpression[i])) {
+            postfixStack.push(processedExpression[i]);
         }
-        else if (isOperator(initialExpression[i])) {
+        else if (isOperator(processedExpression[i])) {
             if (operatorStack.length == 0) {
-                operatorStack.push(initialExpression[i]);
+                operatorStack.push(processedExpression[i]);
             }
             else {
-                if (hasHigherPrecende(initialExpression[i], operatorStack[operatorStack.length - 1])) {
-                    operatorStack.push(initialExpression[i]);
+                if (hasHigherPrecende(processedExpression[i], operatorStack[operatorStack.length - 1])) {
+                    operatorStack.push(processedExpression[i]);
                 }
                 else {
                     postfixStack.push(operatorStack.pop());
-                    operatorStack.push(initialExpression[i]);    
+                    operatorStack.push(processedExpression[i]);    
                 }     
             }
         }
@@ -65,7 +76,7 @@ function concludeOperation() {
         postfixStack.push(operatorStack.pop())
     }
 
-    evaluatePostfix(postfixStack);
+    return postfixStack;
 }
 
 function hasHigherPrecende(firstOperator, secondOperator) {
@@ -91,8 +102,8 @@ function evaluatePostfix(outputStack) {
         }
     }
     
-    displayValue.textContent = outputStack;
-    initialExpression = outputStack;
+    displayValue.textContent = '';
+    updateDisplay(outputStack);
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -112,7 +123,7 @@ function calculateOperation(firstOperand, operator, secondOperand) {
         case '/':
         if (secondOperand == 0) {
             alert('you can\'t divide by zero')
-            clearDisplay();
+            displayValue.textContent = '';
         }
         else {
             result = firstOperand / secondOperand;
@@ -127,9 +138,12 @@ function calculateOperation(firstOperand, operator, secondOperand) {
     return result;
 }
 
-function clearDisplay() {
-    operand = '';
-	initialExpression = [];
-	displayValue.textContent = '';
-}
-document.querySelector('#clear_button').addEventListener('click', clearDisplay);
+document.querySelector('#clear_button').addEventListener('click', function(event) {
+    displayValue.textContent = '';
+});
+
+document.querySelector('#del_button').addEventListener('click', function(event) {
+    let currentDisplayValue = displayValue.textContent;
+    currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
+    displayValue.textContent = currentDisplayValue; 
+});
