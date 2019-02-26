@@ -1,4 +1,5 @@
-let displayValue = document.querySelector('#displayValue')
+const displayValue = document.querySelector('#displayValue');
+const historyText = document.querySelector('#history_text');
 
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
@@ -31,7 +32,7 @@ function isDisplayEmpty() {
 }
 
 function hasOperator() {
-    return isOperator(displayValue.textContent[[displayValue.textContent.length - 2]]) 
+    return (isOperator(displayValue.textContent[displayValue.textContent.length - 2]))
 }
 
 function isOperator(inputCharacter) {
@@ -45,6 +46,7 @@ function isNumber(inputCharacter) {
 
 function updateDisplay(displayText) {
     displayValue.textContent += displayText;
+    historyText.textContent += displayText;
 }
 
 function concludeOperation() {
@@ -124,6 +126,7 @@ function evaluatePostfix(outputStack) {
     }
     
     displayValue.textContent = '';
+    historyText.textContent += '\r\n';
     updateDisplay(outputStack);
 }
 
@@ -164,8 +167,7 @@ document.querySelector('#clear_button').addEventListener('click', function(event
 });
 
 document.querySelector('#delete_button').addEventListener('click', function(event) {
-    let currentDisplayValue = displayValue.textContent;
-    
+    let currentDisplayValue = displayValue.textContent;    
     if (isOperator(currentDisplayValue[currentDisplayValue.length - 2])) {
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 3));
     }
@@ -173,5 +175,13 @@ document.querySelector('#delete_button').addEventListener('click', function(even
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
     }
 
+    let currentHistoryText = historyText.textContent;
+    currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 1));
+    
+    historyText.textContent = currentHistoryText;
     displayValue.textContent = currentDisplayValue; 
 });
+
+document.querySelector('#reset_history_button').addEventListener('click', function(event) {
+    historyText.textContent = '';
+})
