@@ -5,12 +5,9 @@
     background-color: #011627;
     height: 100vh;
     font-family: 'Oswald', sans-serif;
-    color: #FBE8A6;
-    pointer-events: none;
 }
 
 .calculator {
-    background-color: #011627;
     display: grid;
     grid-column-start: 2;
     grid-row-start: 2;
@@ -19,10 +16,10 @@
 }
 
 .display {
+    color: #FBE8A6;
     display: flex;
     justify-content: center;
     align-items: center;
-    word-spacing: 5px;
 }
 
 .keyboard {
@@ -69,7 +66,6 @@ button {
     background-color: transparent;
     outline: 0;
     box-sizing: border-box;
-    pointer-events: auto;
     transition-duration: 0.5s;
 }
 

@@ -1,3 +1,39 @@
+let displayValue = document.querySelector('#displayValue')
+
+document.querySelector('#keyboard').addEventListener('click', function(event) {
+	let inputCharacter = event.target.innerHTML;
+
+    if(inputCharacter == '.'){
+        if(hasNumber()) {
+            updateDisplay(inputCharacter);
+        }
+    }
+	else if (isNumber(inputCharacter)) {
+        updateDisplay(inputCharacter);
+    }
+    else if (isOperator(inputCharacter)) {
+        if(!(hasOperator()) && !(isDisplayEmpty())) {
+            updateDisplay(' ' + inputCharacter + ' ');
+        }
+    }
+	else if (inputCharacter == '=' && !(hasOperator())) {    
+        concludeOperation();
+    }
+});
+
+function hasNumber() {
+    const numbers = ['1','2','3','4','5','6','7','8','9',];
+    return (numbers.includes(displayValue.textContent[displayValue.textContent.length - 1]))
+}
+
+function isDisplayEmpty() {
+    return (displayValue.textContent.length == 0);
+}
+
+function hasOperator() {
+    return isOperator(displayValue.textContent[[displayValue.textContent.length - 2]]) 
+}
+
 function isOperator(inputCharacter) {
     const operators = ['+','-','x','/'];
     return operators.includes(inputCharacter);
@@ -6,21 +42,6 @@ function isOperator(inputCharacter) {
 function isNumber(inputCharacter) {
     return (((!(isNaN(inputCharacter)) && isFinite(inputCharacter))) || inputCharacter == '.');
 }
-
-const displayValue = document.querySelector('#displayValue')
-document.querySelector('#keyboard').addEventListener('click', function(event) {
-	let inputCharacter = event.target.innerHTML;
-
-	if (isNumber(inputCharacter)) {
-        updateDisplay(inputCharacter);
-	}
-	else if (isOperator(inputCharacter)) {
-        updateDisplay(' ' + inputCharacter + ' ');
-    }
-	else if (inputCharacter == '=') {    
-        concludeOperation();
-    }
-});
 
 function updateDisplay(displayText) {
     displayValue.textContent += displayText;
@@ -142,8 +163,15 @@ document.querySelector('#clear_button').addEventListener('click', function(event
     displayValue.textContent = '';
 });
 
-document.querySelector('#del_button').addEventListener('click', function(event) {
+document.querySelector('#delete_button').addEventListener('click', function(event) {
     let currentDisplayValue = displayValue.textContent;
-    currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
+    
+    if (isOperator(currentDisplayValue[currentDisplayValue.length - 2])) {
+        currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 3));
+    }
+    else {
+        currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
+    }
+
     displayValue.textContent = currentDisplayValue; 
 });
