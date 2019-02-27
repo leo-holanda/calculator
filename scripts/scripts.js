@@ -15,7 +15,7 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         updateDisplay(inputCharacter);
     }
     else if (isOperator(inputCharacter)) {
-        if(!(hasOperator()) && !(isDisplayEmpty())) {
+        if(!(hasOperator()) && !(isDisplayEmpty()) && !(hasDot())) {
             dotPermission = true;
             updateDisplay(' ' + inputCharacter + ' ');
         }
@@ -25,9 +25,12 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
     }
 });
 
+function hasDot() {
+    return(displayValue.textContent[displayValue.textContent.length - 1] == '.')
+}
+
 function hasNumber() {
     const numbers = ['0','1','2','3','4','5','6','7','8','9'];
-    console.log(displayValue.textContent[displayValue.textContent.length - 1])
     return (numbers.includes(displayValue.textContent[displayValue.textContent.length - 1]))
 }
 
