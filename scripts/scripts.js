@@ -10,20 +10,38 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
             dotPermission = false;
             updateDisplay(inputCharacter);
         }
-    }
-	else if (isNumber(inputCharacter)) {
-        updateDisplay(inputCharacter);
+        else {
+            blinkAlert(event.target.id);
+        }
     }
     else if (isOperator(inputCharacter)) {
         if(!(hasOperator()) && !(isDisplayEmpty()) && !(hasDot())) {
             dotPermission = true;
             updateDisplay(' ' + inputCharacter + ' ');
         }
+        else {
+            blinkAlert(event.target.id)
+        }
     }
-	else if (inputCharacter == '=' && !(hasOperator())) {    
-        concludeOperation();
+	else if (inputCharacter == '=') {    
+        if(!(hasOperator())) {
+            concludeOperation();
+        }
+        else {
+            blinkAlert(event.target.id);
+        }
+    }
+	else if (isNumber(inputCharacter)) {
+        updateDisplay(inputCharacter);
     }
 });
+
+function blinkAlert(elementID) {
+    let id = '#' + elementID;
+    document.querySelector(id).style.backgroundColor = 'red';
+    document.querySelector(id).style.color = 'white';
+    setTimeout(() => {document.querySelector(id).removeAttribute('style')}, 500);  
+}
 
 function hasDot() {
     return(displayValue.textContent[displayValue.textContent.length - 1] == '.')
