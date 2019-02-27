@@ -99,7 +99,7 @@ button:active {
     justify-self: center;
     align-self: start;
     white-space: pre-line;
-    margin-top: 15px;
+    padding: 15px;
 }
 
 .reset_history {
@@ -107,6 +107,5 @@ button:active {
     justify-self: center;
     align-self: end;
     height: 30px;
-    width: 110px;
-    margin-bottom: 15px;
+    width: 100%;
 }

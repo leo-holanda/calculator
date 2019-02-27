@@ -1,11 +1,13 @@
 const displayValue = document.querySelector('#displayValue');
 const historyText = document.querySelector('#history_text');
+let dotPermission = true;
 
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
 
     if(inputCharacter == '.'){
-        if(hasNumber()) {
+        if(hasNumber() && dotPermission) {
+            dotPermission = false;
             updateDisplay(inputCharacter);
         }
     }
@@ -14,6 +16,7 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
     }
     else if (isOperator(inputCharacter)) {
         if(!(hasOperator()) && !(isDisplayEmpty())) {
+            dotPermission = true;
             updateDisplay(' ' + inputCharacter + ' ');
         }
     }
@@ -23,7 +26,8 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
 });
 
 function hasNumber() {
-    const numbers = ['1','2','3','4','5','6','7','8','9',];
+    const numbers = ['0','1','2','3','4','5','6','7','8','9'];
+    console.log(displayValue.textContent[displayValue.textContent.length - 1])
     return (numbers.includes(displayValue.textContent[displayValue.textContent.length - 1]))
 }
 
@@ -159,7 +163,12 @@ function calculateOperation(firstOperand, operator, secondOperand) {
         break;
     }
     
-    return result;
+    return round(result,2);
+}
+
+//Thanks @jackmoore!
+function round(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 }
 
 document.querySelector('#clear_button').addEventListener('click', function(event) {
@@ -168,16 +177,17 @@ document.querySelector('#clear_button').addEventListener('click', function(event
 
 document.querySelector('#delete_button').addEventListener('click', function(event) {
     let currentDisplayValue = displayValue.textContent;    
+    let currentHistoryText = historyText.textContent;
+
     if (isOperator(currentDisplayValue[currentDisplayValue.length - 2])) {
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 3));
+        currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 3));
     }
     else {
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
+        currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 1));
     }
 
-    let currentHistoryText = historyText.textContent;
-    currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 1));
-    
     historyText.textContent = currentHistoryText;
     displayValue.textContent = currentDisplayValue; 
 });
