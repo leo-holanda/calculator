@@ -1,5 +1,5 @@
 const displayValue = document.querySelector('#displayValue');
-const historyText = document.querySelector('#history_text');
+const historyValue = document.querySelector('#historyValue');
 let dotPermission = true;
 let operatorPermission = false;
 
@@ -40,10 +40,12 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
 });
 
 function blinkAlert(elementID) {
-    let id = '#' + elementID;
-    document.querySelector(id).style.backgroundColor = 'red';
-    document.querySelector(id).style.color = 'white';
-    setTimeout(() => {document.querySelector(id).removeAttribute('style')}, 469.706);  
+    const id = '#' + elementID;
+    let clickedElement = document.querySelector(id);
+
+    clickedElement.style.backgroundColor = '#D10000';
+    clickedElement.style.color = 'white';
+    setTimeout(() => {clickedElement.removeAttribute('style')}, 469.706);  
 }
 
 function isDisplayEmpty() {
@@ -61,6 +63,7 @@ function isNumber(inputCharacter) {
 
 function hasOperator() {
     const operators = ['+','-','x','/'];
+
     for(let i = 0; i < operators.length; i++) {
         if(displayValue.textContent.includes(operators[i])) {
             return true;
@@ -81,14 +84,16 @@ function hasDot() {
 
 function updateDisplay(displayText) {
     displayValue.textContent += displayText;
-    historyText.textContent += displayText;
+    historyValue.textContent += displayText;
 }
 
 function concludeOperation() {
     let expression = getExpression();
     expression = prepareExpression(expression);
     expression = convertToPostfix(expression);
-    evaluatePostfix(expression);
+    displayValue.textContent = '';
+    historyValue.textContent += '\r\n';
+    updateDisplay(evaluatePostfix(expression));
 }
 
 function getExpression() { 
@@ -148,7 +153,7 @@ function hasHigherPrecende(firstOperator, secondOperator) {
 }
 
 function evaluatePostfix(outputStack) {
-    while(outputStack.length > 1){
+    while(outputStack.length > 1) {
         pickedCharacter = outputStack.shift();
         if (isOperator(pickedCharacter)) {
             secondOperand = outputStack.pop();
@@ -159,10 +164,8 @@ function evaluatePostfix(outputStack) {
             outputStack.push(pickedCharacter);
         }
     }
-    
-    displayValue.textContent = '';
-    historyText.textContent += '\r\n';
-    updateDisplay(outputStack);
+
+    return outputStack;
 }
 
 function calculateOperation(firstOperand, operator, secondOperand) {
@@ -207,26 +210,26 @@ document.querySelector('#clear_button').addEventListener('click', function(event
 });
 
 document.querySelector('#delete_button').addEventListener('click', function(event) {
-    let currentDisplayValue = displayValue.textContent;    
-    let currentHistoryText = historyText.textContent;
+    let displayText = displayValue.textContent;    
+    let historyText = historyValue.textContent;
 
-    if (isOperator(currentDisplayValue[currentDisplayValue.length - 2])) {
-        currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 3));
-        currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 3));
+    if (isOperator(displayText[displayText.length - 2])) {
+        displayText = displayText.slice(0,(displayText.length - 3));
+        historyText = historyText.slice(0,(historyText.length - 3));
         operatorPermission = true;
     }
     else {
-        if(currentDisplayValue[currentDisplayValue.length - 1] == '.') {
+        if(displayText[displayText.length - 1] == '.') {
             dotPermission = true;
         }
-        currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
-        currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 1));
+        displayText = displayText.slice(0,(displayText.length - 1));
+        historyText = historyText.slice(0,(historyText.length - 1));
     }
 
-    historyText.textContent = currentHistoryText;
-    displayValue.textContent = currentDisplayValue; 
+    historyValue.textContent = historyText;
+    displayValue.textContent = displayText; 
 });
 
 document.querySelector('#reset_history_button').addEventListener('click', function(event) {
-    historyText.textContent = '';
+    historyValue.textContent = '';
 })
