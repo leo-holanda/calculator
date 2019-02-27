@@ -1,6 +1,7 @@
 const displayValue = document.querySelector('#displayValue');
 const historyText = document.querySelector('#history_text');
 let dotPermission = true;
+let operatorPermission = false;
 
 document.querySelector('#keyboard').addEventListener('click', function(event) {
 	let inputCharacter = event.target.innerHTML;
@@ -15,8 +16,9 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         }
     }
     else if (isOperator(inputCharacter)) {
-        if(!(hasOperator()) && !(isDisplayEmpty()) && !(hasDot())) {
+        if(operatorPermission && !(isDisplayEmpty()) && !(hasDot())) {
             dotPermission = true;
+            operatorPermission = false;
             updateDisplay(' ' + inputCharacter + ' ');
         }
         else {
@@ -24,7 +26,7 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         }
     }
 	else if (inputCharacter == '=') {    
-        if(!(hasOperator())) {
+        if(!(isDisplayEmpty()) && hasNumber() && hasOperator()) {
             concludeOperation();
         }
         else {
@@ -32,6 +34,7 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
         }
     }
 	else if (isNumber(inputCharacter)) {
+        operatorPermission = true;
         updateDisplay(inputCharacter);
     }
 });
@@ -40,24 +43,11 @@ function blinkAlert(elementID) {
     let id = '#' + elementID;
     document.querySelector(id).style.backgroundColor = 'red';
     document.querySelector(id).style.color = 'white';
-    setTimeout(() => {document.querySelector(id).removeAttribute('style')}, 500);  
-}
-
-function hasDot() {
-    return(displayValue.textContent[displayValue.textContent.length - 1] == '.')
-}
-
-function hasNumber() {
-    const numbers = ['0','1','2','3','4','5','6','7','8','9'];
-    return (numbers.includes(displayValue.textContent[displayValue.textContent.length - 1]))
+    setTimeout(() => {document.querySelector(id).removeAttribute('style')}, 469.706);  
 }
 
 function isDisplayEmpty() {
     return (displayValue.textContent.length == 0);
-}
-
-function hasOperator() {
-    return (isOperator(displayValue.textContent[displayValue.textContent.length - 2]))
 }
 
 function isOperator(inputCharacter) {
@@ -67,6 +57,26 @@ function isOperator(inputCharacter) {
 
 function isNumber(inputCharacter) {
     return (((!(isNaN(inputCharacter)) && isFinite(inputCharacter))) || inputCharacter == '.');
+}
+
+function hasOperator() {
+    const operators = ['+','-','x','/'];
+    for(let i = 0; i < operators.length; i++) {
+        if(displayValue.textContent.includes(operators[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function hasNumber() {
+    const numbers = ['0','1','2','3','4','5','6','7','8','9'];
+    return (numbers.includes(displayValue.textContent[displayValue.textContent.length - 1]))
+}
+
+function hasDot() {
+    return(displayValue.textContent[displayValue.textContent.length - 1] == '.')
 }
 
 function updateDisplay(displayText) {
@@ -203,8 +213,12 @@ document.querySelector('#delete_button').addEventListener('click', function(even
     if (isOperator(currentDisplayValue[currentDisplayValue.length - 2])) {
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 3));
         currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 3));
+        operatorPermission = true;
     }
     else {
+        if(currentDisplayValue[currentDisplayValue.length - 1] == '.') {
+            dotPermission = true;
+        }
         currentDisplayValue = currentDisplayValue.slice(0,(currentDisplayValue.length - 1));
         currentHistoryText = currentHistoryText.slice(0,(currentHistoryText.length - 1));
     }

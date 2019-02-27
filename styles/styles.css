@@ -88,7 +88,6 @@ button:active {
     grid-column-start: 4;
     grid-row-start: 2;
     grid-template-rows: 4fr 1fr;
-    border: 2px solid #FBE8A6;
     border-radius: 1px;
 }
 
@@ -108,4 +107,6 @@ button:active {
     align-self: end;
     height: 30px;
     width: 100%;
+    border-top: 2px solid #FBE8A6;
+    font-size: 18px;
 }
