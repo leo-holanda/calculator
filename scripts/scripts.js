@@ -250,6 +250,7 @@ function undo() {
         displayText = displayText.slice(0,(displayText.length - 3));
         historyText = historyText.slice(0,(historyText.length - 3));
         operatorPermission = true;
+        dotPermission = false;
     }
     else {
         if(displayText[displayText.length - 1] == '.') {
