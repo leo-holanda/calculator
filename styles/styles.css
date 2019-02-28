@@ -25,6 +25,8 @@
 .keyboard {
     display: grid;
     grid-template-columns: 3fr 1fr;
+    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+    transition-duration: 0.5s;
 }
 
 .numbers {

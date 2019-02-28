@@ -4,15 +4,27 @@ let dotPermission = true;
 let operatorPermission = false;
 
 document.querySelector('#keyboard').addEventListener('click', function(event) {
-	let inputCharacter = event.target.innerHTML;
+    getInput(event.target.innerHTML, event.target.id);
+});
 
+document.onkeypress = function(event) {
+    getInput(event.key, 'keyboard')
+}
+
+document.onkeydown = function(event) {
+    if(event.keyCode == 8) {
+        undo();
+    }
+}
+
+function getInput(inputCharacter, effectTarget) {
     if(inputCharacter == '.'){
         if(hasNumber() && dotPermission) {
             dotPermission = false;
             updateDisplay(inputCharacter);
         }
         else {
-            blinkAlert(event.target.id);
+            blinkAlert(effectTarget);
         }
     }
     else if (isOperator(inputCharacter)) {
@@ -22,7 +34,7 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
             updateDisplay(' ' + inputCharacter + ' ');
         }
         else {
-            blinkAlert(event.target.id)
+            blinkAlert(effectTarget)
         }
     }
 	else if (inputCharacter == '=') {    
@@ -30,14 +42,14 @@ document.querySelector('#keyboard').addEventListener('click', function(event) {
             concludeOperation();
         }
         else {
-            blinkAlert(event.target.id);
+            blinkAlert(effectTarget);
         }
     }
 	else if (isNumber(inputCharacter)) {
         operatorPermission = true;
         updateDisplay(inputCharacter);
     }
-});
+}
 
 function blinkAlert(elementID) {
     const id = '#' + elementID;
@@ -91,9 +103,13 @@ function concludeOperation() {
     let expression = getExpression();
     expression = prepareExpression(expression);
     expression = convertToPostfix(expression);
+ 
+    let result = evaluatePostfix(expression);
+    dotPermission =  isFloat(result) ? false : true;
+
     displayValue.textContent = '';
-    historyValue.textContent += '\r\n';
-    updateDisplay(evaluatePostfix(expression));
+    historyValue.textContent += '\r\n';    
+   updateDisplay(result);
 }
 
 function getExpression() { 
@@ -168,6 +184,10 @@ function evaluatePostfix(outputStack) {
     return outputStack;
 }
 
+function isFloat(n){
+    return (n % 1 !== 0);
+}
+
 function calculateOperation(firstOperand, operator, secondOperand) {
 	firstOperand = Number(firstOperand);
 	secondOperand = Number(secondOperand);
@@ -209,7 +229,13 @@ document.querySelector('#clear_button').addEventListener('click', function(event
     displayValue.textContent = '';
 });
 
-document.querySelector('#delete_button').addEventListener('click', function(event) {
+document.querySelector('#delete_button').addEventListener('click', undo);
+
+document.querySelector('#reset_history_button').addEventListener('click', function(event) {
+    historyValue.textContent = '';
+})
+
+function undo() {
     let displayText = displayValue.textContent;    
     let historyText = historyValue.textContent;
 
@@ -228,8 +254,4 @@ document.querySelector('#delete_button').addEventListener('click', function(even
 
     historyValue.textContent = historyText;
     displayValue.textContent = displayText; 
-});
-
-document.querySelector('#reset_history_button').addEventListener('click', function(event) {
-    historyValue.textContent = '';
-})
+}
