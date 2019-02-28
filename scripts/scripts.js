@@ -15,6 +15,9 @@ document.onkeydown = function(event) {
     if(event.keyCode == 8) {
         undo();
     }
+    else if(event.keyCode == 13) {
+        getInput('=','keyboard')
+    }
 }
 
 function getInput(inputCharacter, effectTarget) {
@@ -107,7 +110,7 @@ function concludeOperation() {
     let result = evaluatePostfix(expression);
     dotPermission =  isFloat(result) ? false : true;
 
-    displayValue.textContent = '';
+    clearContent(true);
     historyValue.textContent += '\r\n';    
    updateDisplay(result);
 }
@@ -205,7 +208,7 @@ function calculateOperation(firstOperand, operator, secondOperand) {
         case '/':
         if (secondOperand == 0) {
             alert('you can\'t divide by zero')
-            displayValue.textContent = '';
+            clearContent(true);
         }
         else {
             result = firstOperand / secondOperand;
@@ -226,14 +229,18 @@ function round(value, decimals) {
 }
 
 document.querySelector('#clear_button').addEventListener('click', function(event) {
-    displayValue.textContent = '';
+    clearContent(true);
 });
 
 document.querySelector('#delete_button').addEventListener('click', undo);
 
 document.querySelector('#reset_history_button').addEventListener('click', function(event) {
-    historyValue.textContent = '';
+    clearContent(false);
 })
+
+function clearContent(token) {
+    token ? displayValue.textContent = '' : historyValue.textContent = '';
+}
 
 function undo() {
     let displayText = displayValue.textContent;    
